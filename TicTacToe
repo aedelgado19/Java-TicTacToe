@@ -1,0 +1,250 @@
+import java.lang.reflect.Array;
+import java.util.Scanner;	
+public class TicTacToad2 {
+	
+    	//print out board format
+    	int [][] board = new int[3][3];
+    	int winner = 0;
+    	
+    	final int BLANK = 0;
+    	
+    	final int X_MOVE = 1;
+    	final int O_MOVE = 2;
+    	
+    	final int X_TURN = 0;
+    	final int O_TURN = 1;
+    	int AmountOfXWins = 0;
+    	int AmountOfOWins = 0;
+    	int turn = X_TURN;
+    	Scanner scanner;
+    	String input = "";
+    	
+    	
+    	//main function
+    	public TicTacToad2() {
+        	scanner = new Scanner(System.in);
+        	boolean stillPlaying = true; //stillPlaying sees if user is still playing
+        	boolean successfulMove = false; //successfulMove checks for legality
+        	while (stillPlaying == true) {
+            	
+            	ResetBoard(); // clear board
+            	turn = X_TURN; // start turn as X's turn
+            	while (Win() == 0 && CheckTie() == false) {
+                	//Call to a method named PrintBoard
+            	 successfulMove = false;
+                	PrintBoard();
+                	System.out.println("Enter a move: ");
+                	input = scanner.nextLine();
+                	
+            	
+                	//if the user inputs an illegal move, don't accept it and have them enter a new one
+                	if (input.length() != 2){
+                    	System.out.println("Please type a letter that is followed by a number, like a3 for example. ");
+                	}
+            	
+                    	//check to see if move is legal for board size (ex: can't type M7 as a coordinate)
+                    	else if (input.charAt(0) != 'a' && input.charAt(0) != 'b' && input.charAt(0) != 'c') {
+                        	System.out.println("Row must be either a, b, or c. ");
+                    	}
+                	
+                    	else if (input.charAt(1) != '1' && input.charAt(1) != '2' && input.charAt(1) != '3') {
+                        	System.out.println("Column must be either 1, 2, or 3. ");
+                    	}
+                	
+            	
+                    	
+                    	//determine whose turn it is and print out either their X or O, then change whose turn it is
+                   	else {
+                        	int row = input.charAt(0)- 'a';
+                        	int column = input.charAt(1) - '1';
+                	
+                        	if ((turn == X_TURN) && (board[row][column] == BLANK)) {
+                            	board[row][column] = X_MOVE;
+                            	successfulMove = true;
+                        	
+                        	}
+                        	//if there is already a piece where user wants to place one, tell user
+                        	else if ((turn == X_TURN) && (board[row][column] != BLANK)) {
+                            	System.out.println("There is already a piece there.");
+                        	}
+                        	
+                        	//
+                        	if ((turn == O_TURN) && (board[row][column] == BLANK)) {
+                            	board[row][column] = O_MOVE;
+                            	successfulMove = true;
+                        	}
+                        	else if ((turn == O_TURN) && (board[row][column] != BLANK)) {
+                            	System.out.println("There is already a piece there.");
+                        	}
+                    	
+                    	//switch whose turn it is
+                        	if (turn == O_TURN && successfulMove == true) {
+                            	turn = X_TURN;
+                        	}
+                        	
+                        	else if (turn == X_TURN && successfulMove == true) {
+                            	turn = O_TURN;
+                        	}
+                	}
+                	
+                    	
+                	
+            	}// end while loop
+        	
+        	
+    	
+            	//winning statements
+            	String PlayAgain = "";
+            	
+            	//if X wins, win = 1. if O wins, win = 2. Nobody wins (or if there's a tie), win = 0
+            	if (Win() == 0) {
+                	System.out.println("Game was a tie!");   	
+            	}
+            	else if (Win() == 1) {
+                	System.out.println("X wins!");
+        			AmountOfXWins++;
+        			System.out.println("Amount of X wins: " + AmountOfXWins);
+        			System.out.println("Amount of O wins: " + AmountOfOWins);
+
+            	} else if (Win() == 2) {
+            	 System.out.println("O wins!");
+            	 	AmountOfOWins++;
+            	 	System.out.println("Amount of O wins: " + AmountOfOWins);
+            	 	System.out.println("Amount of X wins: " + AmountOfXWins);
+            	}
+                	
+               	//play again?
+            	System.out.println("Want to play again?");
+            	PlayAgain = scanner.nextLine();
+            	if (PlayAgain.equals("yes") || PlayAgain.equals("y")) {
+                 	stillPlaying = true;
+            	}
+            	if (PlayAgain.equals("no") || PlayAgain.equals("n")){
+                     	stillPlaying = false;
+            	}
+                	
+	
+        	} // end while stillplaying = true
+    	}	//end public tictactoe
+    	
+    	
+    	
+    	
+    	// Begin a new tic tac toe game
+    	public static void main(String[] args) {
+        	new TicTacToad2();
+    	}
+    	
+    	//set up board
+    	public void PrintBoard() {
+        	
+        	System.out.println(" \t1\t2\t3");
+        	
+        	//while the row is less than the board length, print a new row and label it with letters
+        	for (int row = 0; row < board.length; row++) {
+            	String output = (char)('a'+row) + "\t";
+            	
+            	
+            	//while the columns are under the board length, print out new columns labeled with numbers
+            	for (int column = 0; column < board[0].length; column++) {
+                	if (board[row][column] == BLANK) {
+                    	output += " \t";
+                	}
+                	else if (board[row][column] == X_MOVE){
+                    	output += "X\t";
+                	}
+                	
+                	else if (board[row][column] == O_MOVE) {
+                    	output += "O\t";
+                	}
+            	
+            	}
+            	
+            	
+            	System.out.println(output);
+        	}
+    	}
+    	
+    	//clear board by setting each coordinate to blank
+    	public void ResetBoard() {
+        	board[0][0] = BLANK;
+        	board[1][0] = BLANK;
+        	board[2][0] = BLANK;
+        	board[0][1] = BLANK;
+        	board[0][2] = BLANK;
+        	board[1][1] = BLANK;
+        	board[1][2] = BLANK;
+        	board[2][1] = BLANK;
+        	board[2][2] = BLANK;
+    	}
+    	// Method created to determine a win or not
+    	// Searches board for three moves in a row/column/diagonal
+    	// Inputs = None
+    	// Outputs = 0,1,2 where 0 is no winner, 1 is player 1, 2 is player 2.
+    	public int Win() {
+    	
+        	int i =0;
+        	// Assumes two players...
+        	for (i = 1; i<= 2; i++) {
+            	
+            	if (board[0][0] == i && board[0][1] == i && board[0][2] == i) {
+                	return i;
+            	}
+            	if (board[0][0] == i && board[1][1] == i && board[2][2] == i) {
+                	return i;
+            	}
+            	if (board[0][2] == i && board[1][1] == i && board[2][0] == i) {
+                	return i;
+            	}
+            	if (board[0][2] == i && board[1][2] == i && board[2][2] == i) {
+                	return i;
+            	}
+            	if (board[1][0] == i && board[1][1] == i && board[1][2] == i) {
+                	return i;
+            	}
+            	if (board[2][0] == i && board[2][1] == i && board[2][2] == i) {
+                	return i;
+            	}
+            	if (board[0][0] == i && board[1][0] == i && board[2][0] == i) {
+                	return i;
+            	}
+            	if (board[0][1] == i && board[1][1] == i && board[2][1] == i) {
+                	return i;
+            	}
+        	
+        	
+        	}
+        	return 0; // No one won
+    	}
+    	//ties occur when every coordinate is filled and there's no winner.
+  	
+    	//check to see if the every coordinate is filled
+    	public boolean CheckBoardFill() {
+        	if(
+        	board[0][0] != BLANK &&
+        	board[1][0] != BLANK &&
+        	board[2][0] != BLANK &&
+        	board[0][1] != BLANK &&
+        	board[0][2] != BLANK &&
+        	board[1][1] != BLANK &&
+        	board[1][2] != BLANK &&
+        	board[2][1] != BLANK &&
+        	board[2][2] != BLANK) {
+            	return true;
+        	}
+        	return false;
+    	}
+    	//if board is filled and nobody's won, then it's a tie and return true
+    	public boolean CheckTie() {
+        	if (CheckBoardFill()==true && (Win() == 0)) {
+            	return true;
+        	}
+        	return false;
+    	}
+  
+	}
+
+
+
+
+
